@@ -1,4 +1,4 @@
-package infraestructure
+package adapters
 
 import (
 	"fmt"
@@ -44,4 +44,20 @@ func (m *MySql) RegisterUser(user entities.User) (*entities.User, error){
 		log.Printf("[MySQL] - Resultado de la consulta es nil.")
 	}
     return &user, nil
+}
+
+func (m *MySql) FindUserByUsername(username string) (*entities.User, error) {
+     sqlStatement := `SELECT * FROM user where idUser = ?`; 
+	 result, err := m.conn.FetchRows(sqlStatement, username); 
+	 if err != nil {
+        return nil, err
+    }
+	var user entities.User
+	for result.Next() {
+		err := result.Scan(&user.IdUser, &user.Username, &user.Password);
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+return &user, nil
 }
