@@ -3,7 +3,7 @@ package dependencies
 import (
 	"log"
 	"os"
-	"users_api/src/users/application"
+	"users_api/src/users/application/use_cases"
 	"users_api/src/users/infraestructure/adapters"
 	"users_api/src/users/infraestructure/controllers"
 	"users_api/src/users/infraestructure/routes"

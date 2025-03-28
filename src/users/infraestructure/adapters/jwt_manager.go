@@ -16,7 +16,7 @@ func NewJWTManager(secretKey string) *JWTManager {
 }
 
 func (m *JWTManager) GenerateToken(username string, role string) (string, error) {
-    claims := jwt.MapClaims{
+    claims := jwt.MapClaims{ 
         "username": username,
         "role":     role, 
         "exp":      time.Now().Add(time.Hour * 1).Unix(),

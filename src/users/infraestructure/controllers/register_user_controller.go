@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"net/http"
-	"users_api/src/users/application"
+	application "users_api/src/users/application/use_cases"
 	"users_api/src/users/domain/entities"
     "golang.org/x/crypto/bcrypt"
 	"github.com/gin-gonic/gin"

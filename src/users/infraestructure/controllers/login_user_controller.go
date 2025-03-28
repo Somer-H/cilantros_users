@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"users_api/src/users/application"
 	"users_api/src/users/application/entities"
+	application "users_api/src/users/application/use_cases"
 
 	"github.com/gin-gonic/gin"
 )

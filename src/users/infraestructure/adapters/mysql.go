@@ -5,6 +5,8 @@ import (
 	"log"
 	"users_api/src/core"
 	"users_api/src/users/domain/entities"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type MySql struct {
@@ -65,4 +67,48 @@ func (m *MySql) FindUserByUsername(username string) (*entities.User, error) {
     }
 
     return &user, nil
+}
+
+func (m *MySql) UpdateUser(idUser int, user entities.UserToUpdate) (*entities.User, error) {
+	// Consulta para verificar si el usuario existe
+	sql := "SELECT * FROM user WHERE idUser = ?"
+	resultGet, err1 := m.conn.FetchRows(sql, idUser)
+	if err1 != nil {
+		return nil, fmt.Errorf("error al obtener el usuario: %v", err1)
+	}
+
+	var userGet entities.User
+	if resultGet.Next() {
+		err := resultGet.Scan(&userGet.IdUser, &userGet.Username, &userGet.Password, &userGet.Role, &userGet.Gmail)
+		if err != nil {
+			return nil, fmt.Errorf("error al escanear los datos del usuario: %v", err)
+		}
+	} else {
+		return nil, fmt.Errorf("usuario no encontrado")
+	}
+	if(user.Gmail != ""){
+		userGet.Gmail = user.Gmail
+	}
+	if(user.Password != ""){
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost);
+        if err != nil {
+            return nil, fmt.Errorf("error al generar la contraseña hash: %v", err)
+        }
+        userGet.Password = string(hashedPassword)
+    }
+	sqlStatement := `UPDATE user SET username = ?, password = ?, role = ?, gmail = ? WHERE idUser = ?`
+	result, err := m.conn.DB.Exec(sqlStatement, userGet.Username, userGet.Password, userGet.Role, userGet.Gmail, idUser)
+	if err != nil {
+		return nil, fmt.Errorf("error al ejecutar la consulta de actualización: %v", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el número de filas afectadas: %v", err)
+	}
+
+	if rowsAffected == 1 {
+		return &userGet, nil
+	} else {
+		return nil, fmt.Errorf("usuario no encontrado o no se actualizó")
+	}
 }

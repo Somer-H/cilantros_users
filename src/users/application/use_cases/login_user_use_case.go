@@ -26,7 +26,6 @@ func (uc *LoginUserUseCase) LoginUser(userNew entities.UserToLog) (entities.User
 	if err != nil {
 		return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
 	}
-	fmt.Println(userNew.Username, userNew.Password, user.Username, user.Password)
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userNew.Password))
 	if err != nil {
 		return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
