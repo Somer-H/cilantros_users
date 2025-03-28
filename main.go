@@ -9,7 +9,6 @@ import (
 
 func main() {
 	r := gin.Default()
-
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"*"},
 		AllowMethods:  []string{"GET", "POST", "PUT", "DELETE"},
@@ -17,10 +16,8 @@ func main() {
 		ExposeHeaders: []string{"Authorization"},
 		MaxAge:        12 * time.Hour,
 	}))
-    
 	dependencies.InitUsers(r)
-
-    if err := r.Run(":4000"); err != nil {
+    if err := r.Run(); err != nil {
         panic(err)
     }
 }

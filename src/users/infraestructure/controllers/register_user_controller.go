@@ -33,5 +33,13 @@ func (ruc *RegisterUserController) Register(c *gin.Context) {
         c.JSON(500, gin.H{"error": err.Error()})
         return
     }
-	c.JSON(http.StatusCreated, gin.H{"user": userCreated})
+	c.JSON(http.StatusCreated, gin.H{
+        "data": 
+            gin.H{
+                "idUser": userCreated.IdUser,
+                "username": userCreated.Username,
+                "email": userCreated.Gmail,
+                "role": userCreated.Role,
+            },
+    })
 }

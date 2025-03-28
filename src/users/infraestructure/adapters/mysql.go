@@ -21,8 +21,8 @@ func NewMySQL() (*MySql, error) {
 
 
 func (m *MySql) RegisterUser(user entities.User) (*entities.User, error){
-	sqlStatement := `INSERT INTO user(username, password) VALUES (?,?)`
-    result, err := m.conn.DB.Exec(sqlStatement, user.Username, user.Password);
+	sqlStatement := `INSERT INTO user(username, password, role, gmail) VALUES (?,?, ?, ?)`
+    result, err := m.conn.DB.Exec(sqlStatement, user.Username, user.Password, user.Role, user.Gmail);
 
     if err != nil {
         return nil, err
@@ -54,7 +54,7 @@ func (m *MySql) FindUserByUsername(username string) (*entities.User, error) {
     }
 	var user entities.User
 	for result.Next() {
-		err := result.Scan(&user.IdUser, &user.Username, &user.Password);
+		err := result.Scan(&user.IdUser, &user.Username, &user.Password, &user.Password, &user.Gmail);
         if err != nil {
             log.Fatal(err)
         }
