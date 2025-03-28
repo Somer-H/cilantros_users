@@ -22,6 +22,9 @@ func NewLoginUserUseCase(db repositories.UserRepository, tokenManager repository
 }
 
 func (uc *LoginUserUseCase) LoginUser(userNew entities.UserToLog) (entities.UserLog, error) {
+	if(userNew.Password == "" || userNew.Username == "") {
+		return entities.UserLog{}, fmt.Errorf("los campos de contraseña y nombre de usuario son obligatorios")
+	}
 	user, err := uc.db.FindUserByUsername(userNew.Username)
 	if err != nil {
 		return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
