@@ -18,11 +18,11 @@ func InitUsers(r *gin.Engine) {
     if err != nil {
         log.Fatalf("Error al cargar el archivo .env: %v", err)
     }
-	dbHost := os.Getenv("SECRET_KEY")
-	tm := adapters.NewJWTManager(dbHost)
+	key := os.Getenv("SECRET_KEY")
+	tm := adapters.NewJWTManager(key)
 	register_user_use_case := application.NewRegisterUserUseCase(ps)
 	register_user_controller := controllers.NewRegisterUserController(register_user_use_case)
 	login_user_use_case := application.NewLoginUserUseCase(ps, tm)
 	login_user_controller := controllers.NewLoginUserController(login_user_use_case)
-	routes.UserRouter(r, register_user_controller, login_user_controller)
+	routes.UserRouter(r, key, register_user_controller, login_user_controller)
 }

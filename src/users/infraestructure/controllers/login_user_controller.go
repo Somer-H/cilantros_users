@@ -26,7 +26,7 @@ func (luc *LoginUserController) Login(c *gin.Context) {
         c.JSON(500, gin.H{"error": err.Error()})
         return
     }
-    c.Header("Authorization", "Bearer "+login.TokenLog)
+    c.Header("Authorization", "Bearer " + login.TokenLog)
 
     c.JSON(200, gin.H{
         "message": "Login successful",

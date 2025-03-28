@@ -47,17 +47,22 @@ func (m *MySql) RegisterUser(user entities.User) (*entities.User, error){
 }
 
 func (m *MySql) FindUserByUsername(username string) (*entities.User, error) {
-     sqlStatement := `SELECT * FROM user where idUser = ?`; 
-	 result, err := m.conn.FetchRows(sqlStatement, username); 
-	 if err != nil {
-        return nil, err
+    sqlStatement := `SELECT * FROM user WHERE username = ?`
+    
+    result, err := m.conn.FetchRows(sqlStatement, username)
+    if err != nil {
+        return nil, fmt.Errorf("error al ejecutar la consulta: %v", err)
     }
-	var user entities.User
-	for result.Next() {
-		err := result.Scan(&user.IdUser, &user.Username, &user.Password, &user.Password, &user.Gmail);
-        if err != nil {
-            log.Fatal(err)
-        }
+
+    // Validar si no hay resultados
+    if !result.Next() {
+        return nil, fmt.Errorf("usuario no encontrado")
     }
-return &user, nil
+    var user entities.User
+    err = result.Scan(&user.IdUser, &user.Username, &user.Password, &user.Role, &user.Gmail )
+    if err != nil {
+        return nil, fmt.Errorf("error al mapear los resultados: %v", err)
+    }
+
+    return &user, nil
 }

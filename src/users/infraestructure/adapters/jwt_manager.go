@@ -15,10 +15,11 @@ func NewJWTManager(secretKey string) *JWTManager {
     return &JWTManager{secretKey: secretKey}
 }
 
-func (m *JWTManager) GenerateToken(username string) (string, error) {
+func (m *JWTManager) GenerateToken(username string, role string) (string, error) {
     claims := jwt.MapClaims{
         "username": username,
-        "exp":    time.Now().Add(time.Hour * 1).Unix(),
+        "role":     role, 
+        "exp":      time.Now().Add(time.Hour * 1).Unix(),
     }
 
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

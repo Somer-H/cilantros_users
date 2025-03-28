@@ -10,33 +10,34 @@ import (
 )
 
 type LoginUserUseCase struct {
-    db           repositories.UserRepository
-    tokenManager repository.TokenManager
+	db           repositories.UserRepository
+	tokenManager repository.TokenManager
 }
 
 func NewLoginUserUseCase(db repositories.UserRepository, tokenManager repository.TokenManager) *LoginUserUseCase {
-    return &LoginUserUseCase{
-        db:           db,
-        tokenManager: tokenManager,
-    }
+	return &LoginUserUseCase{
+		db:           db,
+		tokenManager: tokenManager,
+	}
 }
 
 func (uc *LoginUserUseCase) LoginUser(userNew entities.UserToLog) (entities.UserLog, error) {
-    user, err := uc.db.FindUserByUsername(userNew.Username)
-    if err != nil {
-        return entities.UserLog{}, fmt.Errorf("user not found")
-    }
-    err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userNew.Password))
-    if err != nil {
-        return entities.UserLog{}, fmt.Errorf("invalid password")
-    }
-    token, err := uc.tokenManager.GenerateToken(user.Username)
-    if err != nil {
-        return entities.UserLog{}, fmt.Errorf("error generating token")
-    }
-    return entities.UserLog{
-        TokenLog: token,
-        Username: user.Username,
-        ID:       user.IdUser,
-    }, nil
+	user, err := uc.db.FindUserByUsername(userNew.Username)
+	if err != nil {
+		return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
+	}
+	fmt.Println(userNew.Username, userNew.Password, user.Username, user.Password)
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userNew.Password))
+	if err != nil {
+		return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
+	}
+	token, err := uc.tokenManager.GenerateToken(user.Username, user.Role)
+	if err != nil {
+		return entities.UserLog{}, fmt.Errorf("error generating token")
+	}
+	return entities.UserLog{
+		TokenLog: token,
+		Username: user.Username,
+		ID:       user.IdUser,
+	}, nil
 }
