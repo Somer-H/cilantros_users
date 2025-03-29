@@ -24,5 +24,7 @@ func InitUsers(r *gin.Engine) {
 	register_user_controller := controllers.NewRegisterUserController(register_user_use_case)
 	login_user_use_case := application.NewLoginUserUseCase(ps, tm)
 	login_user_controller := controllers.NewLoginUserController(login_user_use_case)
-	routes.UserRouter(r, key, register_user_controller, login_user_controller)
+	update_use_case := application.NewUpdateUserUseCase(ps)
+	update_controller := controllers.NewUpdateUserController(update_use_case)
+	routes.UserRouter(r, key, register_user_controller, login_user_controller, update_controller)
 }

@@ -9,7 +9,7 @@ type UpdateUserUseCase struct {
 	UserRepository repositories.UserRepository
 }
 
-func NewUpdateUser(userRepository repositories.UserRepository) *UpdateUserUseCase {
+func NewUpdateUserUseCase(userRepository repositories.UserRepository) *UpdateUserUseCase {
     return &UpdateUserUseCase{UserRepository: userRepository}
 }
 

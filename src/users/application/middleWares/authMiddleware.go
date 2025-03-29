@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func RoleMiddleware(secretKey string, expectedRole string) gin.HandlerFunc {
+func RoleMiddleware(secretKey string, expectedRoles []string) gin.HandlerFunc {
     return func(c *gin.Context) {
         token := c.GetHeader("Authorization")
         if token == "" {
@@ -20,7 +20,7 @@ func RoleMiddleware(secretKey string, expectedRole string) gin.HandlerFunc {
         token = strings.TrimPrefix(token, "Bearer ")
 
         parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-            return []byte(secretKey), nil 
+            return []byte(secretKey), nil
         })
         if err != nil || !parsedToken.Valid {
             c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
@@ -35,12 +35,26 @@ func RoleMiddleware(secretKey string, expectedRole string) gin.HandlerFunc {
             return
         }
         role, ok := claims["role"].(string)
-        if !ok || role != expectedRole {
+        if !ok {
             c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
             c.Abort()
             return
         }
 
-        c.Next() 
+        isRoleAllowed := false
+        for _, expectedRole := range expectedRoles {
+            if role == expectedRole {
+                isRoleAllowed = true
+                break
+            }
+        }
+        
+        if !isRoleAllowed {
+            c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+            c.Abort()
+            return
+        }
+
+        c.Next()
     }
 }
