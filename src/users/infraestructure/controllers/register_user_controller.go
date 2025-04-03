@@ -4,7 +4,6 @@ import (
 	"net/http"
 	application "users_api/src/users/application/use_cases"
 	"users_api/src/users/domain/entities"
-    "golang.org/x/crypto/bcrypt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,12 +21,6 @@ func (ruc *RegisterUserController) Register(c *gin.Context) {
         c.JSON(http.StatusNotAcceptable, gin.H{"error": err.Error()})
         return
     }
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost);
-	if err != nil {
-        c.JSON(500, gin.H{"error": err.Error()})
-        return
-    }
-	user.Password = string(hashedPassword)
 	userCreated, err := ruc.useCase.Execute(user)
 	if err != nil {
         c.JSON(500, gin.H{"error": err.Error()})

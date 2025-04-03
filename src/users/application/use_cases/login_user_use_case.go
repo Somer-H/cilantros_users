@@ -5,19 +5,20 @@ import (
 	"users_api/src/users/application/entities"
 	repository "users_api/src/users/application/reposoitory"
 	"users_api/src/users/domain/repositories"
-
-	"golang.org/x/crypto/bcrypt"
+	"users_api/src/users/domain/services"
 )
 
 type LoginUserUseCase struct {
-	db           repositories.UserRepository
+	db           repositories.IUserRepository
 	tokenManager repository.TokenManager
+	bs services.IBcrypService
 }
 
-func NewLoginUserUseCase(db repositories.UserRepository, tokenManager repository.TokenManager) *LoginUserUseCase {
+func NewLoginUserUseCase(db repositories.IUserRepository, tokenManager repository.TokenManager, bs services.IBcrypService) *LoginUserUseCase {
 	return &LoginUserUseCase{
 		db:           db,
 		tokenManager: tokenManager,
+		bs: bs,
 	}
 }
 
@@ -29,10 +30,10 @@ func (uc *LoginUserUseCase) LoginUser(userNew entities.UserToLog) (entities.User
 	if err != nil {
 		return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userNew.Password))
-	if err != nil {
-		return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
-	}
+    validate := uc.bs.ComparePasswords(user.Password, userNew.Password)
+	if !validate {
+        return entities.UserLog{}, fmt.Errorf("usuario o contraseña incorrectos")
+    }
 	token, err := uc.tokenManager.GenerateToken(user.Username, user.Role)
 	if err != nil {
 		return entities.UserLog{}, fmt.Errorf("error generating token")

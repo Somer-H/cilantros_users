@@ -22,7 +22,7 @@ func (uuc *UpdateUserController) UpdateUser(c *gin.Context){
         c.JSON(400, gin.H{"error": err.Error()})
         return
     }
-	idUser := c.Params.ByName("idUser")
+	idUser := c.Params.ByName("id")
 	if idUser == "" {
 		c.JSON(400, gin.H{"error": "idUser no puede estar vacío"})
 		return

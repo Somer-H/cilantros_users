@@ -1,9 +1,8 @@
-package middlewares
+package service
 
 import (
 	"net/http"
 	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -16,9 +15,7 @@ func RoleMiddleware(secretKey string, expectedRoles []string) gin.HandlerFunc {
             c.Abort()
             return
         }
-
         token = strings.TrimPrefix(token, "Bearer ")
-
         parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
             return []byte(secretKey), nil
         })
