@@ -15,5 +15,5 @@ func UserRouter(r *gin.Engine, key string, register_user_controller *controllers
 	protectedRoutesSuperUser.POST("/register", register_user_controller.Register)
     protectedRoutesAllUsers := v1.Group("/allUsers")
 	protectedRoutesAllUsers.Use(service.RoleMiddleware(key, []string{"normaluser", "superuser", "premiumuser"}))
-	protectedRoutesAllUsers.PUT("/update/:id", updateUserController.UpdateUser)
+	protectedRoutesAllUsers.PUT("/update/:idUsers", updateUserController.UpdateUser)
 }
